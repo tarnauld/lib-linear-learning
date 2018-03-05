@@ -6,8 +6,13 @@ struct Point {
     z: f64
 }
 
-fn predict(){
+fn predict(row : [f64; 2], w: [f64; 10]) -> f64{
+	let activation = w[0];
 
+	if activation >= 0.0 {
+		return 1.0;
+	}
+	return 0.0;
 }
 
 fn generateWeigth(dim: u64) -> [f64; 10]{
@@ -35,7 +40,22 @@ fn shouldGenerateRandomNumber(){
 
 #[test]
 fn shouldPredictCorrectly(){
+	let data_set = [[2.7810836,2.550537003],
+	[1.465489372,2.362125076],
+	[3.396561688,4.400293529],
+	[1.38807019,1.850220317],
+	[3.06407232,3.005305973],
+	[7.627531214,2.759262235],
+	[5.332441248,2.088626775],
+	[6.922596716,1.77106367],
+	[8.675418651,-0.242068655],
+	[7.673756466,3.508563011]];
+	let w = generateWeigth(10);
 
+	for i in 0..10 {
+		let res = predict([0.0, 0.0], generateWeigth(10));
+		assert!(res == res);
+	}
 }
 
 #[test]
