@@ -1,0 +1,7 @@
+[package]
+name = "poc"
+version = "0.1.0"
+authors = ["timothee.arnauld1@gmail.com <timothee.arnauld1@gmail.com>"]
+
+[dependencies]
+rand = "0.4"
