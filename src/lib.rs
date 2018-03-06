@@ -57,7 +57,6 @@ fn generate_weigth() -> [f64; 4]{
     for i in 0..4{
         let x = rand::random::<f64>();
         w[i as usize] = (x * 2.0) - 1.0;
-        println!("{}", w[i as usize]);
     }
     return w;
 }
