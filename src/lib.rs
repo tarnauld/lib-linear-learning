@@ -6,11 +6,11 @@ struct Point {
     z: f64
 }
 
-fn convertToPoint(row: &[f64; 3]) -> Point{
+fn convert_to_point(row: &[f64; 3]) -> Point{
     Point {x: row[0], y: row[1], z: row[2]}
 }
 
-fn convertToRawData(point: &Point) -> [f64; 3]{
+fn convert_to_raw_data(point: &Point) -> [f64; 3]{
     [
         point.x,
         point.y,
@@ -33,12 +33,12 @@ fn predict(row : &Point, w: [f64; 4]) -> f64{
 }
 
 fn weights_training(data_set: &mut[Point], step: f64, nb: u32) -> [f64; 4]{
-    let mut weights = generateWeigth();
+    let mut weights = generate_weigth();
 
     for i in 0..nb{
         let mut sum = 0.0;
         for (i, point) in data_set.iter().enumerate() {
-            let row = convertToRawData(point);
+            let row = convert_to_raw_data(point);
             let prediction = predict(point, weights);
             let error = row[2] - prediction;
             sum += error * 2 as f64;
@@ -51,7 +51,7 @@ fn weights_training(data_set: &mut[Point], step: f64, nb: u32) -> [f64; 4]{
     return weights;
 }
 
-fn generateWeigth() -> [f64; 4]{
+fn generate_weigth() -> [f64; 4]{
 	let mut w: [f64; 4] = [0.0; 4];
 
     for i in 0..4{
@@ -62,13 +62,13 @@ fn generateWeigth() -> [f64; 4]{
     return w;
 }
 
-fn convertRawDataSetToPointDataSet(p : &[f64], nb: u64) -> Vec<Point> {
+fn convert_raw_data_set_to_point_dataset(p : &[f64], nb: u64) -> Vec<Point> {
     let mut points : Vec<Point> = Vec::new();
     let mut i = 0;
 
     while i < nb {
         let tmp : [f64;3] = [p[i as usize], p[(i+1) as usize], p[(i+2) as usize]];
-        let mut point = convertToPoint(&tmp);
+        let mut point = convert_to_point(&tmp);
         points.push(point);
         i += 3;
     }
@@ -77,7 +77,7 @@ fn convertRawDataSetToPointDataSet(p : &[f64], nb: u64) -> Vec<Point> {
 
 #[no_mangle]
 pub extern fn linear_learning(step: f64, p : &[f64], nb: u64) -> bool{
-    let mut points = convertRawDataSetToPointDataSet(p, nb);
+    let mut points = convert_raw_data_set_to_point_dataset(p, nb);
 
     weights_training(points.as_mut_slice(), step, 5);
 
@@ -85,22 +85,22 @@ pub extern fn linear_learning(step: f64, p : &[f64], nb: u64) -> bool{
 }
 
 // ((X^tX)^-1Xt)Y
-fn calculateWeights(points : &[Point]) -> [f64;10] {
+fn calculate_weights(points : &[Point]) -> [f64;10] {
     let mut res : [f64;10] = [0.0 as f64;10];
     return res;
 }
 
 #[no_mangle]
 pub extern fn regression_learning(step: f64, p : &[f64], dim: u64, nb: u64) -> bool{
-    let mut points = convertRawDataSetToPointDataSet(p, nb);
+    let mut points = convert_raw_data_set_to_point_dataset(p, nb);
 
-    let w = calculateWeights(points.as_mut_slice());
+    let w = calculate_weights(points.as_mut_slice());
 
     return true;
 }
 
 #[test]
-fn shouldPredictCorrectly(){
+fn should_predict_correctly(){
 	let data_set = [[2.7810836,2.550537003, -0.100000000],
 	[1.465489372,2.362125076, -0.100000000],
 	[3.396561688,4.400293529, -0.100000000],
@@ -115,7 +115,7 @@ fn shouldPredictCorrectly(){
     let mut p : Vec<Point>= Vec::new();
 
     for i in 0..data_set.len(){
-        p.push(convertToPoint(&data_set[i]));
+        p.push(convert_to_point(&data_set[i]));
     }
 
     weights_training(p.as_mut_slice(), 0.1, 5);
