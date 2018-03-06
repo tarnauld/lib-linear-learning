@@ -7,7 +7,12 @@ struct Point {
 }
 
 fn predict(row : [f64; 2], w: [f64; 10]) -> f64{
-	let activation = w[0];
+	println!("{0}:{1}", row[0], row[1]);
+	let mut activation = w[0];
+
+	for i in 0..row.len(){
+		activation += w[i + 1] * row[i];
+	}
 
 	if activation >= 0.0 {
 		return 1.0;
@@ -50,11 +55,11 @@ fn shouldPredictCorrectly(){
 	[6.922596716,1.77106367],
 	[8.675418651,-0.242068655],
 	[7.673756466,3.508563011]];
+
 	let w = generateWeigth(10);
 
-	for i in 0..10 {
-		let res = predict([0.0, 0.0], generateWeigth(10));
-		assert!(res == res);
+	for (i, row) in data_set.iter().enumerate(){
+		predict(*row, w);
 	}
 }
 
