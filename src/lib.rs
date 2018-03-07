@@ -73,12 +73,9 @@ fn convert_raw_data_set_to_point_dataset(p : &[f64], nb: u64) -> Vec<Point> {
 }
 
 #[no_mangle]
-pub extern fn linear_classification(step: f64, p : &[f64], nb: u64) -> bool{
+pub extern fn linear_classification(rate: f64, p : &[f64], nb: u64) -> [f64; 3]{
     let mut points = convert_raw_data_set_to_point_dataset(p, nb);
-
-    weights_training(points.as_mut_slice(), step, 5);
-
-    return true;
+    return weights_training(points.as_mut_slice(), rate, 5);
 }
 
 // ((X^tX)^-1Xt)Y
