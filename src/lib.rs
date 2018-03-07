@@ -2,3 +2,4 @@
 extern crate rand;
 
 pub mod linear;
+pub mod perceptron;
