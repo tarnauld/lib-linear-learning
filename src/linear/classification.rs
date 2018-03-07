@@ -1,9 +1,8 @@
 use rand::{Rng};
 use rand;
 
-use linear::miscelanous::convert_to_point;
-use linear::miscelanous::Point;
-use linear::miscelanous::convert_to_raw_data;
+use linear::miscelanous::*;
+use std;
 
 #[no_mangle]
 pub unsafe extern fn classify(row :*mut [f64; 2], w:*mut [f64; 3]) -> f64{
@@ -24,19 +23,16 @@ fn predict(row : &Point, w: [f64; 3]) -> f64{
 }
 
 #[no_mangle]
-pub extern fn weights_training(weights: *mut[f64; 3], data_set: *mut [f64; 9]) -> *mut[f64; 3]{
-    let nb = 10000000;
+pub extern fn weights_training(weights: *mut[f64; 3], raw_data_set: *mut std::os::raw::c_void, nb_points: u64) -> *mut[f64; 3]{
+    let nb = 1000000;
     let step:f64 = 0.01;
+    let data_set = import_external(raw_data_set, (nb_points * 3) as usize);
 
     let mut points : Vec<Point> = Vec::new();
-    let mut i = 0;
-    unsafe{
-        loop{
-            if i == 9{break;}
-            let tmp : [f64;3] = [(*data_set)[i as usize], (*data_set)[(i + 1) as usize], (*data_set)[(i + 2) as usize]];
-            points.push(convert_to_point(&tmp));
-            i += 3;
-        }
+    for i in 0..nb_points{
+        let current = i * 3;
+        let tmp : [f64;3] = [(*data_set)[current as usize], (*data_set)[(current + 1) as usize], (*data_set)[(current + 2) as usize]];
+        points.push(convert_to_point(&tmp));
     }
 
     for _i in 0..nb{
