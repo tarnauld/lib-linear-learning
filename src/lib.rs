@@ -19,7 +19,6 @@ fn convert_to_raw_data(point: &Point) -> [f64; 3]{
 }
 
 fn predict(row : &Point, w: [f64; 4]) -> f64{
-	println!("{0}:{1}:{2}", row.x, row.y, row.z);
 	let mut activation = w[0];
 
 	activation += w[1] * row.x;
@@ -36,12 +35,10 @@ fn weights_training(data_set: &mut[Point], step: f64, nb: u32) -> [f64; 4]{
     let mut weights = generate_weigth();
 
     for i in 0..nb{
-        let mut sum = 0.0;
         for (i, point) in data_set.iter().enumerate() {
             let row = convert_to_raw_data(point);
             let prediction = predict(point, weights);
             let error = row[2] - prediction;
-            sum += error * 2 as f64;
             weights[0] = weights[0] + step * error;
             for i in 0..row.len() - 1{
                 weights[i + 1] = weights[i + 1] + step * error * row[i]
@@ -75,7 +72,7 @@ fn convert_raw_data_set_to_point_dataset(p : &[f64], nb: u64) -> Vec<Point> {
 }
 
 #[no_mangle]
-pub extern fn linear_learning(step: f64, p : &[f64], nb: u64) -> bool{
+pub extern fn linear_classification(step: f64, p : &[f64], nb: u64) -> bool{
     let mut points = convert_raw_data_set_to_point_dataset(p, nb);
 
     weights_training(points.as_mut_slice(), step, 5);
@@ -90,12 +87,18 @@ fn calculate_weights(points : &[Point]) -> [f64;10] {
 }
 
 #[no_mangle]
-pub extern fn regression_learning(step: f64, p : &[f64], dim: u64, nb: u64) -> bool{
+pub extern fn linear_regression(step: f64, p : &[f64], dim: u64, nb: u64) -> bool{
     let mut points = convert_raw_data_set_to_point_dataset(p, nb);
 
     let w = calculate_weights(points.as_mut_slice());
 
     return true;
+}
+
+#[test]
+fn should_generate_random_weigths(){
+    let mut w = generate_weigth();
+    assert!(w.len() == 4);
 }
 
 #[test]
@@ -116,6 +119,8 @@ fn should_predict_correctly(){
     for i in 0..data_set.len(){
         p.push(convert_to_point(&data_set[i]));
     }
-
-    weights_training(p.as_mut_slice(), 0.1, 5);
+    let mut w = weights_training(p.as_mut_slice(), 0.1, 15);
+    for (i, val) in w.iter().enumerate(){
+        println!("{:?}", val);
+    }
 }
