@@ -49,6 +49,10 @@ fn predict(row : &Point, w: [f64; 3]) -> i32{
 	return -1;
 }
 
+fn export_external(w: &[f64]) -> *mut std::os::raw::c_void{
+    Box::into_raw(Box::new(w)) as *mut std::os::raw::c_void
+}
+
 #[no_mangle]
 pub extern fn weights_training(weights: *mut[f64; 3], data_set: [f64; 9]){
     let nb = 10000;
