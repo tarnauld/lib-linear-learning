@@ -32,8 +32,10 @@ fn predict(row : &Point, w: [f64; 3]) -> f64{
 	return 0.0;
 }
 
-fn weights_training(data_set: &mut[Point], step: f64, nb: u32) -> [f64; 3]{
-    let mut weights = generate_weigth();
+#[no_mangle]
+pub extern fn weights_training(weights: *mut[f64; 3], data_set: [f64; 9]){
+    let nb = 5;
+    let step = 0.1;
 
     for _i in 0..nb{
         for (_i, point) in data_set.iter().enumerate() {
@@ -46,17 +48,17 @@ fn weights_training(data_set: &mut[Point], step: f64, nb: u32) -> [f64; 3]{
             }
         }
     }
-    return weights;
 }
 
-fn generate_weigth() -> [f64; 3]{
+#[no_mangle]
+pub unsafe extern "C" fn generate_weigth() -> *mut[f64; 3]{
 	let mut w: [f64; 3] = [0.0; 3];
 
     for i in 0..3{
         let x = rand::random::<f64>();
         w[i as usize] = (x * 2.0) - 1.0;
     }
-    return w;
+   	Box::into_raw(Box::new(w))
 }
 
 fn convert_raw_data_set_to_point_dataset(p : &[f64], nb: u64) -> Vec<Point> {
@@ -91,12 +93,6 @@ pub extern fn linear_regression(step: f64, p : &[f64], dim: u64, nb: u64) -> boo
     let w = calculate_weights(points.as_mut_slice());
 
     return true;
-}
-
-#[test]
-fn should_generate_random_weigths(){
-    let mut w = generate_weigth();
-    assert!(w.len() == 4);
 }
 
 #[test]
