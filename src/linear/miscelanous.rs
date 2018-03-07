@@ -1,3 +1,5 @@
+use std;
+
 pub struct Point {
     pub x: f64,
     pub y: f64,
@@ -32,4 +34,14 @@ pub fn convert_raw_data_set_to_point_dataset(p : &[f64], nb: u64) -> Vec<Point> 
 pub fn calculate_weights(_points : &[Point]) -> [f64;10] {
     let res : [f64;10] = [0.0 as f64;10];
     return res;
+}
+
+pub fn export_external(w: &[f64]) -> *mut std::os::raw::c_void{
+    Box::into_raw(Box::new(w)) as *mut std::os::raw::c_void
+}
+
+pub fn import_external<'a>(array: *mut std::os::raw::c_void, length : usize) -> &'a [f64] {
+    unsafe {
+        std::slice::from_raw_parts(array as *mut f64, length)
+    }
 }

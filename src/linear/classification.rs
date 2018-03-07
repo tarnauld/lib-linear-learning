@@ -4,7 +4,6 @@ use rand;
 use linear::miscelanous::convert_to_point;
 use linear::miscelanous::Point;
 use linear::miscelanous::convert_to_raw_data;
-use std;
 
 #[no_mangle]
 pub unsafe extern fn classify(row :*mut [f64; 2], w:*mut [f64; 3]) -> f64{
@@ -22,18 +21,6 @@ fn predict(row : &Point, w: [f64; 3]) -> f64{
 		return 1.0;
 	}
 	return -1.0;
-}
-
-#[warn(dead_code)]
-fn export_external(w: &[f64]) -> *mut std::os::raw::c_void{
-    Box::into_raw(Box::new(w)) as *mut std::os::raw::c_void
-}
-
-#[warn(dead_code)]
-fn import_external<'a>(array: *mut std::os::raw::c_void, length : u32) -> &'a[f64] {
-    unsafe {
-        std::slice::from_raw_parts(array as *mut f64, length as usize)
-    }
 }
 
 #[no_mangle]
