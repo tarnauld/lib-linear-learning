@@ -51,7 +51,7 @@ fn predict(row : &Point, w: [f64; 3]) -> i32{
 
 #[no_mangle]
 pub extern fn weights_training(weights: *mut[f64; 3], data_set: [f64; 9]){
-    let nb = 5;
+    let nb = 10000;
     let step = 0.1;
 
     let mut points : Vec<Point> = Vec::new();
@@ -122,26 +122,23 @@ pub extern fn linear_regression(step: f64, p : &[f64], dim: u64, nb: u64) -> boo
     return true;
 }
 
-/*#[test]
+#[test]
 fn should_predict_correctly(){
-	let data_set = [[2.7810836,2.550537003, -0.100000000],
-	[1.465489372,2.362125076, -0.100000000],
-	[3.396561688,4.400293529, -0.100000000],
-	[1.38807019,1.850220317, -0.100000000],
-	[3.06407232,3.005305973, -0.100000000],
-	[7.627531214,2.759262235, -0.100000000],
-	[5.332441248,2.088626775, -0.100000000],
-	[6.922596716,1.77106367, -0.100000000],
-	[8.675418651,-0.242068655, -0.100000000],
-	[7.673756466,3.508563011, -0.100000000]];
+	let data_set = [2.7810836,2.550537003, 1.0,1.465489372,2.362125076, 1.0, -3.396561688,-4.400293529, -1.0];
 
-    let mut p : Vec<Point>= Vec::new();
+    unsafe{
+        let mut m = generate_weight();
+        weights_training(m, data_set);
+        let datas = [[-1.38807019, -1.850220317],
+    	[3.06407232,3.005305973],
+    	[-7.627531214,2.759262235],
+    	[-5.332441248,2.088626775],
+    	[-6.922596716,1.77106367],
+    	[-8.675418651,-0.242068655],
+    	[7.673756466,3.508563011]];
 
-    for i in 0..data_set.len(){
-        p.push(convert_to_point(&data_set[i]));
+        for (i, val) in datas.iter().enumerate(){
+            println!("{:?}", classify(*val, *m));
+        }
     }
-    let mut w = weights_training(p.as_mut_slice(), 0.1, 15);
-    for (i, val) in w.iter().enumerate(){
-        println!("{:?}", val);
-    }
-}*/
+}
