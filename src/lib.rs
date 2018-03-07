@@ -49,6 +49,14 @@ fn predict(row : &Point, w: [f64; 3]) -> i32{
 	return -1;
 }
 
+fn export_external(w: &[f64]) {
+    Box::into_raw(Box::new(w)) as *mut std::os::raw::c_void
+}
+
+fn import_external(w: *mut std::os::raw::c_void) {
+    std::slice::from_raw_parts(array as *mut f64, length)
+}
+
 #[no_mangle]
 pub extern fn weights_training(weights: *mut[f64; 3], data_set: [f64; 9]){
     let nb = 5;
@@ -121,6 +129,8 @@ pub extern fn linear_regression(step: f64, p : &[f64], dim: u64, nb: u64) -> boo
 
     return true;
 }
+
+
 
 /*#[test]
 fn should_predict_correctly(){
