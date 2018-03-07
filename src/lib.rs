@@ -1,3 +1,4 @@
+#![feature(rustc_private)]
 extern crate rand;
 
 struct Point {
@@ -18,12 +19,12 @@ fn convert_to_raw_data(point: &Point) -> [f64; 3]{
     ]
 }
 
-fn predict(row : &Point, w: [f64; 4]) -> f64{
+fn predict(row : &Point, w: [f64; 3]) -> f64{
 	let mut activation = w[0];
 
-	activation += w[1] * row.x;
-    activation += w[2] * row.y;
-    activation += w[3] * row.z;
+	activation += w[0] * row.x;
+    activation += w[1] * row.y;
+    activation += w[2] * row.z;
 
 	if activation >= 0.0 {
 		return 1.0;
@@ -31,11 +32,11 @@ fn predict(row : &Point, w: [f64; 4]) -> f64{
 	return 0.0;
 }
 
-fn weights_training(data_set: &mut[Point], step: f64, nb: u32) -> [f64; 4]{
+fn weights_training(data_set: &mut[Point], step: f64, nb: u32) -> [f64; 3]{
     let mut weights = generate_weigth();
 
-    for i in 0..nb{
-        for (i, point) in data_set.iter().enumerate() {
+    for _i in 0..nb{
+        for (_i, point) in data_set.iter().enumerate() {
             let row = convert_to_raw_data(point);
             let prediction = predict(point, weights);
             let error = row[2] - prediction;
@@ -48,10 +49,10 @@ fn weights_training(data_set: &mut[Point], step: f64, nb: u32) -> [f64; 4]{
     return weights;
 }
 
-fn generate_weigth() -> [f64; 4]{
-	let mut w: [f64; 4] = [0.0; 4];
+fn generate_weigth() -> [f64; 3]{
+	let mut w: [f64; 3] = [0.0; 3];
 
-    for i in 0..4{
+    for i in 0..3{
         let x = rand::random::<f64>();
         w[i as usize] = (x * 2.0) - 1.0;
     }
