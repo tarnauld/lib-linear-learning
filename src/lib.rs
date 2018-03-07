@@ -1,5 +1,8 @@
 #![feature(rustc_private)]
 extern crate rand;
+extern crate nalgebra;
+use nalgebra::core::dimension::Dynamic as Dynamic;
+use nalgebra::core::MatrixMN as MatrixMN;
 
 struct Point {
     x: f64,
@@ -19,7 +22,21 @@ fn convert_to_raw_data(point: &Point) -> [f64; 3]{
     ]
 }
 
-fn predict(row : &Point, w: [f64; 3]) -> f64{
+#[no_mangle]
+pub extern fn classify(row : [f64; 2], w: [f64; 3]) -> i32{
+	let mut activation = w[0];
+
+	activation += w[0] * row[0];
+    activation += w[1] * row[1];
+    activation += w[2];
+
+	if activation >= 0.0 {
+		return 1;
+	}
+	return -1;
+}
+
+fn predict(row : &Point, w: [f64; 3]) -> i32{
 	let mut activation = w[0];
 
 	activation += w[0] * row.x;
@@ -27,9 +44,9 @@ fn predict(row : &Point, w: [f64; 3]) -> f64{
     activation += w[2] * row.z;
 
 	if activation >= 0.0 {
-		return 1.0;
+		return 1;
 	}
-	return 0.0;
+	return -1;
 }
 
 #[no_mangle]
@@ -37,21 +54,32 @@ pub extern fn weights_training(weights: *mut[f64; 3], data_set: [f64; 9]){
     let nb = 5;
     let step = 0.1;
 
+    let mut points : Vec<Point> = Vec::new();
+    let mut i = 0;
+    loop{
+        if i == 9{break;}
+        let mut tmp : [f64;3] = [data_set[i as usize], data_set[(i + 1) as usize], data_set[(i + 2) as usize]];
+        points.push(convert_to_point(&tmp));
+        i += 3;
+    }
+
     for _i in 0..nb{
-        for (_i, point) in data_set.iter().enumerate() {
+        for (_i, point) in points.iter().enumerate() {
             let row = convert_to_raw_data(point);
-            let prediction = predict(point, weights);
-            let error = row[2] - prediction;
-            weights[0] = weights[0] + step * error;
-            for i in 0..row.len() - 1{
-                weights[i + 1] = weights[i + 1] + step * error * row[i]
+            unsafe{
+                let prediction = predict(point, *weights);
+                let error = row[2] - prediction as f64;
+                (*weights)[0] = (*weights)[0] + step * error;
+                for i in 0..row.len() - 1{
+                    (*weights)[i + 1] = (*weights)[i + 1] + step * error * row[i];
+                }
             }
         }
     }
 }
 
 #[no_mangle]
-pub unsafe extern "C" fn generate_weigth() -> *mut[f64; 3]{
+pub unsafe extern "C" fn generate_weight() -> *mut[f64; 3]{
 	let mut w: [f64; 3] = [0.0; 3];
 
     for i in 0..3{
@@ -74,12 +102,6 @@ fn convert_raw_data_set_to_point_dataset(p : &[f64], nb: u64) -> Vec<Point> {
     points
 }
 
-#[no_mangle]
-pub extern fn linear_classification(rate: f64, p : &[f64], nb: u64) -> [f64; 3]{
-    let mut points = convert_raw_data_set_to_point_dataset(p, nb);
-    return weights_training(points.as_mut_slice(), rate, 5);
-}
-
 // ((X^tX)^-1Xt)Y
 fn calculate_weights(points : &[Point]) -> [f64;10] {
     let mut res : [f64;10] = [0.0 as f64;10];
@@ -88,14 +110,19 @@ fn calculate_weights(points : &[Point]) -> [f64;10] {
 
 #[no_mangle]
 pub extern fn linear_regression(step: f64, p : &[f64], dim: u64, nb: u64) -> bool{
-    let mut points = convert_raw_data_set_to_point_dataset(p, nb);
 
-    let w = calculate_weights(points.as_mut_slice());
+    let m = Dynamic::new(nb as usize);
+    let n = Dynamic::new(dim as usize);
+    let matrix : MatrixMN<f64, Dynamic, Dynamic> = MatrixMN::from_row_slice_generic(m, n, p);
+    let inversedMatrix = matrix.pseudo_inverse(1e-9);
+
+
+    //let w = calculate_weights(points.as_mut_slice());
 
     return true;
 }
 
-#[test]
+/*#[test]
 fn should_predict_correctly(){
 	let data_set = [[2.7810836,2.550537003, -0.100000000],
 	[1.465489372,2.362125076, -0.100000000],
@@ -117,4 +144,4 @@ fn should_predict_correctly(){
     for (i, val) in w.iter().enumerate(){
         println!("{:?}", val);
     }
-}
+}*/
