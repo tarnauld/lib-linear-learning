@@ -11,18 +11,6 @@ pub unsafe extern fn classify(row :*mut [f64; 2], w:*mut [f64; 3]) -> f64{
 	predict(&point, *w)
 }
 
-fn predict(row : &Point, w: [f64; 3]) -> f64{
-	let mut activation = w[0];
-
-	activation += w[1] * row.x;
-    activation += w[2] * row.z;
-
-	if activation >= 0.0 {
-		return 1.0;
-	}
-	return -1.0;
-}
-
 #[no_mangle]
 pub extern fn weights_training(weights: *mut[f64; 3], data_set: *mut [f64; 9]) -> *mut[f64; 3]{
     let nb = 10000000;
@@ -62,4 +50,16 @@ pub unsafe extern "C" fn generate_weight() -> *mut[f64; 3]{
         w[i as usize] = rand::thread_rng().gen_range(-1., 1.);
     }
    	Box::into_raw(Box::new(w))
+}
+
+fn predict(row : &Point, w: [f64; 3]) -> f64{
+	let mut activation = w[0];
+
+	activation += w[1] * row.x;
+    activation += w[2] * row.z;
+
+	if activation >= 0.0 {
+		return 1.0;
+	}
+	return -1.0;
 }
