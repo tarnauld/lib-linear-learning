@@ -43,7 +43,7 @@ fn should_train_nodes(){
         assert!(classify(&mut[1.0 as f64, 1.001 as f64], w) > 0 as f64);
         assert!(classify(&mut[1.0 as f64, 0.999 as f64], w) > 0 as f64);
         println!("{:?}", classify(&mut[0.0 as f64, -1.0 as f64], w) );
-        assert!(classify(&mut[0.0 as f64, -1.0 as f64], w) > 0 as f64);
+        assert!(classify(&mut[0.0 as f64, -1.0 as f64], w) < 0 as f64);
 
         assert!(classify(&mut[1.0 as f64, 1.0 as f64], w) > 0 as f64);
         assert!(classify(&mut[-1.0 as f64, -1.0 as f64], w) < 0 as f64);
