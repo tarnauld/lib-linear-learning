@@ -3,7 +3,7 @@ use linear::miscelanous::*;
 use linear::classification::weights_training;
 use std;
 
-#[test]
+/*#[test]
 fn should_generate_random_values(){
     unsafe{
         let w = generate_weight();
@@ -52,4 +52,4 @@ fn should_train_nodes(){
         assert!(classify(&mut[-1.0 as f64, -1.0 as f64], w) < 0 as f64);
         assert!(classify(&mut[-1.0 as f64, 1.0 as f64], w) < 0 as f64);
     }
-}
+}*/

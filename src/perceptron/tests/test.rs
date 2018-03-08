@@ -1,6 +1,6 @@
 use perceptron::perceptron;
 
-#[test]
+/*#[test]
 fn should_learn_correctly(){
     perceptron::perceptron(4, 2, 1);
-}
+}*/
