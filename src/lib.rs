@@ -4,3 +4,4 @@ extern crate nalgebra;
 
 pub mod linear;
 pub mod perceptron;
+pub mod rbf;
