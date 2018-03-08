@@ -1,10 +1,8 @@
 use perceptron::couche::*;
 use perceptron::neurone::*;
 use perceptron::learning::*;
-use linear::miscelanous::*;
 use rand::{Rng};
 use rand;
-use rand::distributions::exponential;
 
 
 fn create_couches(neurone_nb : i32, couche_nb: i32, neurones_output: i32){
@@ -93,6 +91,54 @@ fn create_couches(neurone_nb : i32, couche_nb: i32, neurones_output: i32){
 
         for i in 0..cend.neurones.len(){
             Neurone::error_calculation(Box::into_raw(Box::new(cend.neurones[i])));
+        }
+
+        for i in 0..cinter.neurones.len(){
+            for j in 0..cinter.neurones[i].weights.len(){
+                cinter.neurones[i].weights[i] = cstart.neurones[i].weights[j];
+            }
+        }
+
+        current = (current + 1) % learnings.len();
+
+        let mut toErr = 0.;
+
+        for i in 0..learnings.len(){
+            toErr += learnings[i].error;
+        }
+
+        error = toErr / learnings.len() as f64;
+
+        for _i in 0..1{
+            for i in 0..cstart.neurones.len(){
+                let mut val = 2.;
+                cstart.neurones[i].value = val;
+                cstart.neurones[i].sigmoide = val;
+            }
+
+            for i in 0..cinter.neurones.len(){
+                let mut pot = 0.;
+                for j in 0..cstart.neurones.len(){
+                    pot += cstart.neurones[i].sigmoide * cstart.neurones[j].weights[i];
+                }
+
+                cinter.neurones[i].potential = pot;
+                cinter.neurones[i].sigmoide = 1. / (1. + (-1. * pot).exp());
+            }
+
+            for i in 0..cend.neurones.len(){
+                let mut pot = 0.;
+                for j in 0..cinter.neurones.len(){
+                    pot += cinter.neurones[i].sigmoide * cinter.neurones[j].weights[i]
+                }
+
+                cend.neurones[i].potential = pot;
+                cend.neurones[i].sigmoide = 1. / (1. + (-1. * pot).exp());
+            }
+
+            for i in 0..cend.neurones.len(){
+                println!("{:?}", cend.neurones[i].sigmoide)
+            }
         }
     }
 }
