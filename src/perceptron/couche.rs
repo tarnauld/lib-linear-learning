@@ -8,7 +8,7 @@ impl Couche {
     pub fn error_calculation(c: Couche) -> f64{
         let mut err = 0 as f64;
 
-        for (i, val) in c.neurones.iter().enumerate(){
+        for (_i, val) in c.neurones.iter().enumerate(){
             let p = val.value - val.sigmoide;
             err += p.powf(2 as f64);
         }

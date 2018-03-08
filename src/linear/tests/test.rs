@@ -1,4 +1,5 @@
 use linear::classification::*;
+use linear::miscelanous::*;
 
 #[test]
 fn should_generate_random_values(){

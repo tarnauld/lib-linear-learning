@@ -5,7 +5,7 @@ use rand::{Rng};
 use rand;
 
 
-fn create_couches(neurone_nb : i32, couche_nb: i32, neurones_output: i32){
+pub fn perceptron(neurone_nb : i32, couche_nb: i32, neurones_output: i32){
     let mut cstart = Couche::new();
     let mut cinter = Couche::new();
     let mut cend = Couche::new();
@@ -26,7 +26,6 @@ fn create_couches(neurone_nb : i32, couche_nb: i32, neurones_output: i32){
 
     for _i in 0..3{
         let mut l = Learning::new();
-        learnings.push(l);
 
         for _i in 0..cstart.neurones.len(){
             l.input.push(0.0); //Replace by learning value
@@ -35,6 +34,7 @@ fn create_couches(neurone_nb : i32, couche_nb: i32, neurones_output: i32){
         for _i in 0..cend.neurones.len(){
             l.output.push(0.0); //Replace by learning value
         }
+        learnings.push(l);
     }
 
     for _i in 0..cstart.neurones.len(){
@@ -55,7 +55,7 @@ fn create_couches(neurone_nb : i32, couche_nb: i32, neurones_output: i32){
             break;
         }
 
-        let mut l = learnings[current];
+        let l = &learnings[current];
 
         for i in 0..cstart.neurones.len(){
             cstart.neurones[i].value = l.input[i];
