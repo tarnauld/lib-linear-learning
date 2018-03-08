@@ -1,25 +1,13 @@
-use rand::{Rng};
-use rand;
-
-use linear::miscelanous::*;
+use linear::miscelanous::convert_to_point;
+use linear::miscelanous::Point;
+use linear::miscelanous::convert_to_raw_data;
+use linear::miscelanous::import_external;
 use std;
 
 #[no_mangle]
 pub unsafe extern fn classify(row :*mut [f64; 2], w:*mut [f64; 3]) -> f64{
     let point = convert_to_point(&[(*row)[0], 0.0, (*row)[1]]);
 	predict(&point, *w)
-}
-
-fn predict(row : &Point, w: [f64; 3]) -> f64{
-	let mut activation = w[0];
-
-	activation += w[1] * row.x;
-    activation += w[2] * row.z;
-
-	if activation >= 0.0 {
-		return 1.0;
-	}
-	return -1.0;
 }
 
 #[no_mangle]
@@ -50,12 +38,14 @@ pub extern fn weights_training(weights: *mut[f64; 3], raw_data_set: *mut std::os
     weights
 }
 
-#[no_mangle]
-pub unsafe extern "C" fn generate_weight() -> *mut[f64; 3]{
-	let mut w: [f64; 3] = [0.0; 3];
+fn predict(row : &Point, w: [f64; 3]) -> f64{
+	let mut activation = w[0];
 
-    for i in 0..3{
-        w[i as usize] = rand::thread_rng().gen_range(-1., 1.);
-    }
-   	Box::into_raw(Box::new(w))
+	activation += w[1] * row.x;
+    activation += w[2] * row.z;
+
+	if activation >= 0.0 {
+		return 1.0;
+	}
+	return -1.0;
 }
