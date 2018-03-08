@@ -5,12 +5,6 @@ pub struct Couche {
 }
 
 impl Couche {
-    pub fn add_neurone(n: Neurone) -> Vec<Neurone> {
-        let mut couche = Couche::new();
-        couche.neurones.push(n);
-        couche.neurones
-    }
-
     pub fn error_calculation(c: Couche) -> f64{
         let mut err = 0 as f64;
 

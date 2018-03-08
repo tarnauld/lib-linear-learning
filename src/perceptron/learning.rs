@@ -1,7 +1,7 @@
 pub struct Learning {
-    input: Vec<f64>,
-    output: Vec<f64>,
-    error: f64
+    pub input: Vec<f64>,
+    pub output: Vec<f64>,
+    pub error: f64
 }
 
 impl Learning {

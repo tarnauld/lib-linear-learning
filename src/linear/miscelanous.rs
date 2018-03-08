@@ -1,9 +1,21 @@
 use std;
+use rand::{Rng};
+use rand;
 
 pub struct Point {
     pub x: f64,
     pub y: f64,
     pub z: f64
+}
+
+#[no_mangle]
+pub unsafe extern "C" fn generate_weight() -> *mut[f64; 3]{
+	let mut w: [f64; 3] = [0.0; 3];
+
+    for i in 0..3{
+        w[i as usize] = rand::thread_rng().gen_range(-1., 1.);
+    }
+   	Box::into_raw(Box::new(w))
 }
 
 pub fn convert_to_point(row: &[f64; 3]) -> Point{

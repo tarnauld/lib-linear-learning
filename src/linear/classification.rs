@@ -1,6 +1,3 @@
-use rand::{Rng};
-use rand;
-
 use linear::miscelanous::convert_to_point;
 use linear::miscelanous::Point;
 use linear::miscelanous::convert_to_raw_data;
@@ -40,16 +37,6 @@ pub extern fn weights_training(weights: *mut[f64; 3], data_set: *mut [f64; 9]) -
         }
     }
     weights
-}
-
-#[no_mangle]
-pub unsafe extern "C" fn generate_weight() -> *mut[f64; 3]{
-	let mut w: [f64; 3] = [0.0; 3];
-
-    for i in 0..3{
-        w[i as usize] = rand::thread_rng().gen_range(-1., 1.);
-    }
-   	Box::into_raw(Box::new(w))
 }
 
 fn predict(row : &Point, w: [f64; 3]) -> f64{
